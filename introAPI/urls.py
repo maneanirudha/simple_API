@@ -17,10 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from countries import views
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('api/countries/',include('countries.urls')),
+    # path('api/countries/',include('countries.urls'))
+
     path('api/countries/',views.countries_list),
     path('api/countries/<int:pk>/',views.countries_details)
 

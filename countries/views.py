@@ -2,13 +2,17 @@ from django.shortcuts import render
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser
 from rest_framework import status
+from rest_framework.authentication import BasicAuthentication 
+from rest_framework.permissions import IsAuthenticated 
 
 
 from countries.models import Countries
 from countries.serializers import CountriesSerializer
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes , permission_classes
 
 @api_view(['GET','POST',])
+@authentication_classes([BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def countries_list(request):
     if request.method == 'GET':
         countries = Countries.objects.all()
@@ -40,6 +44,8 @@ def countries_list(request):
 
 
 @api_view(['GET','PUT','DELETE','PATCH'])
+@authentication_classes([BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def countries_details(request,pk):
     try:
         countries = Countries.objects.get(pk=pk)
