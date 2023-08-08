@@ -10,6 +10,8 @@ from countries.models import Countries
 from countries.serializers import CountriesSerializer
 from rest_framework.decorators import api_view, authentication_classes , permission_classes
 
+from django.db.models import Q
+
 @api_view(['GET','POST',])
 @authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
@@ -54,9 +56,13 @@ def countries_list(request):
 @permission_classes([IsAuthenticated])
 def countries_details(request,pk):
     try:
-        countries = Countries.objects.get(pk=pk)
+        user = request.user
+        ''' Sort the country list based on country id and check if that particular country 
+        belongs to that user or not'''
+        countries = Countries.objects.get(Q(pk=pk),Q(user=user))
+
     except Countries.DoesNotExist:
-        return JsonResponse({'message':'The country does not exist'},status=status.HTTP_404_NOT_FOUND)
+        return JsonResponse({'message':'The country does not exist in your list'},status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
         countries_serializer = CountriesSerializer(countries)
