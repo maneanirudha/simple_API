@@ -4,7 +4,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework import status
 from rest_framework.authentication import BasicAuthentication 
 from rest_framework.permissions import IsAuthenticated 
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from countries.models import Countries
 from countries.serializers import CountriesSerializer
@@ -15,13 +15,19 @@ from rest_framework.decorators import api_view, authentication_classes , permiss
 @permission_classes([IsAuthenticated])
 def countries_list(request):
     if request.method == 'GET':
-        countries = Countries.objects.all()
 
-        name = request.GET.get('name',None)
-        if name is not None:
-            countries = countries.filter(name__icontains=name)
+        # if request.user.IsAuthenticated:
+        user = request.user
+        country = Countries.objects.filter(user = user)
 
-        countries_serializer = CountriesSerializer(countries,many=True)
+        # countries = Countries.objects.all()
+        # name = request.GET.get('name',None)
+        # if name is not None:
+        #     countries = countries.filter(name__icontains=name)
+
+        
+
+        countries_serializer = CountriesSerializer(country,many=True)
         return JsonResponse(countries_serializer.data,safe=False)
 
     elif request.method == 'POST':
